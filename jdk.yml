@@ -1,0 +1,30 @@
+---
+ - name: Install Java
+   hosts: webservers
+   become: yes
+   tasks:
+    - name: update repos
+      yum:
+        name: "*"
+        state: latest
+    - name: Installing OpenJDK
+      yum:
+        name: java-1.8.0-openjdk
+    - name: Download TomCat
+      get_url:
+        url: "https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.73/bin/apache-tomcat-8.5.73.tar.gz"
+        dest: /usr/local
+    - name: Extracting TomCat
+      unarchive:
+        src: "/usr/local/apache-tomcat-8.5.73.tar.gz"
+        dest: /usr/local
+        remote_src: yes
+    - name: TomCat UP
+      command: nohup /usr/local/apache-tomcat-8.5.73/bin/startup.sh
+      tags:
+      - start
+    - name:  TomCat DOWN
+      command: /usr/local/apache-tomcat-8.5.73/bin/shutdown.sh
+      tags:
+      - stop
+
